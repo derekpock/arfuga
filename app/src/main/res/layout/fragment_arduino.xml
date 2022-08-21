@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.ArduinoFragment">
+
+<!--    Row 0-->
+    <Button
+        android:id="@+id/buiconDisconnected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:text="Disconnected"
+        android:theme="@style/Theme.Arfuga.ButtonFailure"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="@integer/arduinoFragment_row00" />
+
+    <Button
+        android:id="@+id/buiconConnected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:text="Connected"
+        android:theme="@style/Theme.Arfuga.ButtonSuccess"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="@integer/arduinoFragment_row00" />
+
+<!--    Row 1-->
+    <TextView
+        android:id="@+id/labButtonLeft"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="buttonLeft"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/divider"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="@integer/arduinoFragment_row01" />
+
+    <TextView
+        android:id="@+id/valButtonLeft"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="unknown"
+        android:textSize="20sp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/divider"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="@integer/arduinoFragment_row01" />
+
+<!--    Row 2-->
+    <TextView
+        android:id="@+id/labButtonLeftHandled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="buttonLeftHandled"
+        android:textSize="20sp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/divider"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="@integer/arduinoFragment_row02" />
+
+    <TextView
+        android:id="@+id/valButtonLeftHandled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="unknown"
+        android:textSize="20sp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/divider"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="@integer/arduinoFragment_row02" />
+
+<!--    Row 3-->
+    <TextView
+        android:id="@+id/labButtonLeftLed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="buttonLeftLed"
+        android:textSize="20sp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/divider"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="@integer/arduinoFragment_row03" />
+
+    <TextView
+        android:id="@+id/valButtonLeftLed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="unknown"
+        android:textSize="20sp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/divider"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="@integer/arduinoFragment_row03" />
+
+<!--    Row 4-->
+    <TextView
+        android:id="@+id/labButtonRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="buttonRight"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/divider"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="@integer/arduinoFragment_row04" />
+
+    <TextView
+        android:id="@+id/valButtonRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="unknown"
+        android:textSize="20sp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/divider"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="@integer/arduinoFragment_row04" />
+
+<!--    Row 5-->
+    <TextView
+        android:id="@+id/labButtonRightHandled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="buttonRightHandled"
+        android:textSize="20sp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/divider"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="@integer/arduinoFragment_row05" />
+
+    <TextView
+        android:id="@+id/valButtonRightHandled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="unknown"
+        android:textSize="20sp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/divider"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="@integer/arduinoFragment_row05" />
+
+<!--    Row 6-->
+    <TextView
+        android:id="@+id/labButtonRightLed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="buttonRightLed"
+        android:textSize="20sp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/divider"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="@integer/arduinoFragment_row06" />
+
+    <TextView
+        android:id="@+id/valButtonRightLed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="unknown"
+        android:textSize="20sp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/divider"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="@integer/arduinoFragment_row06" />
+
+<!--    Row 7-->
+    <TextView
+        android:id="@+id/labLedColor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ledColor"
+        android:textSize="20sp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/divider"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="@integer/arduinoFragment_row07"/>
+
+    <TextView
+        android:id="@+id/valLedColor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="unknown"
+        android:textSize="20sp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/divider"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="@integer/arduinoFragment_row07"/>
+
+<!--    Row 8-->
+    <TextView
+        android:id="@+id/labLedExternal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ledExternal"
+        android:textSize="20sp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/divider"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="@integer/arduinoFragment_row08" />
+
+    <TextView
+        android:id="@+id/valLedExternal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="unknown"
+        android:textSize="20sp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/divider"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="@integer/arduinoFragment_row08" />
+
+<!--    Row 9-->
+    <TextView
+        android:id="@+id/valErrorDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No Errors"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="@integer/arduinoFragment_row09" />
+
+<!--    Row 10-->
+    <Button
+        android:id="@+id/butResetConnection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Reset Connection"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="@integer/arduinoFragment_row10" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="1dp"
+        android:layout_height="729dp"
+        android:background="?android:attr/listDivider"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--  X item, 1/X division, spacing [x=0->X] (x/X + 1/(2X)) -->
+    <!--  11 items, 1/11 division, spacing [x=0->10] (x/11 + 1/22)  -->
+    <item format="float" type="integer" name="arduinoFragment_row00">0.04545</item>
+    <item format="float" type="integer" name="arduinoFragment_row01">0.13636</item>
+    <item format="float" type="integer" name="arduinoFragment_row02">0.22727</item>
+    <item format="float" type="integer" name="arduinoFragment_row03">0.31818</item>
+    <item format="float" type="integer" name="arduinoFragment_row04">0.40909</item>
+    <item format="float" type="integer" name="arduinoFragment_row05">0.50000</item>
+    <item format="float" type="integer" name="arduinoFragment_row06">0.59090</item>
+    <item format="float" type="integer" name="arduinoFragment_row07">0.68181</item>
+    <item format="float" type="integer" name="arduinoFragment_row08">0.77272</item>
+    <item format="float" type="integer" name="arduinoFragment_row09">0.86363</item>
+    <item format="float" type="integer" name="arduinoFragment_row10">0.95454</item>
+</resources>

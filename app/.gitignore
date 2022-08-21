@@ -1,0 +1,5 @@
+/build
+
+# Project specific exclusions
+# Specific secret values are excluded from git; see README to recreate these yourself.
+/src/main/res/values/secrets.xml

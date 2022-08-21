@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_fueltracker"
+    android:theme="@style/Theme.Arfuga.NoActionBar">
+
+    <fragment
+        android:id="@+id/navigation_arduino"
+        android:name="dlzp.arfuga.ui.ArduinoFragment"
+        android:label="@string/menu_title_arduino"
+        tools:layout="@layout/fragment_arduino" />
+
+    <fragment
+        android:id="@+id/navigation_fueltracker"
+        android:name="dlzp.arfuga.ui.FuelTrackerFragment"
+        android:label="@string/menu_title_fueltracker"
+        tools:layout="@layout/fragment_fueltracker" />
+
+    <fragment
+        android:id="@+id/navigation_garagepi"
+        android:name="dlzp.arfuga.ui.GaragePiFragment"
+        android:label="@string/menu_title_garagepi"
+        tools:layout="@layout/fragment_garagepi" />
+
+</navigation>

@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Arfuga</string>
+    <string name="title_activity_bottom_nav">Arfuga</string>
+    <string name="menu_title_fueltracker">Fuel Tracker</string>
+    <string name="menu_title_garagepi">Garage Pi</string>
+    <string name="menu_title_arduino">Arduino</string>
+</resources>
