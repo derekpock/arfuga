@@ -175,13 +175,13 @@ public class N33ble1MonitorService extends LifecycleService {
             return;
         }
 
-        if (!BluetoothAdapter.checkBluetoothAddress(Constants.DlzpN33ble1Address)) {
-            Log.e(LOG_TAG, "Constants.DlzpN33ble1Address is an invalid BLE address!");
+        if (!BluetoothAdapter.checkBluetoothAddress(getString(R.string.N33ble1Address))) {
+            Log.e(LOG_TAG, "Resource N33ble1Address is an invalid BLE address!");
             N33ble1State.sendIntent(this, N33ble1State.InvalidTargetAddress);
             return;
         }
 
-        final BluetoothDevice bluetoothDevice = bluetoothAdapter.getRemoteDevice(Constants.DlzpN33ble1Address);
+        final BluetoothDevice bluetoothDevice = bluetoothAdapter.getRemoteDevice(getString(R.string.N33ble1Address));
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
             Log.w(LOG_TAG, "Bluetooth permissions are not present.");
             N33ble1State.sendIntent(this, N33ble1State.NoBluetoothPermissions);
