@@ -16,11 +16,16 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import dlzp.arfuga.Constants;
-import dlzp.arfuga.N33ble1BluetoothGattCallback;
-import dlzp.arfuga.N33ble1MonitorService;
-import dlzp.arfuga.N33ble1State;
+import dlzp.arfuga.N33ble1.N33ble1BluetoothGattCallback;
+import dlzp.arfuga.N33ble1.N33ble1MonitorService;
+import dlzp.arfuga.N33ble1.N33ble1State;
 import dlzp.arfuga.databinding.FragmentArduinoBinding;
 
+/**
+ * Builds UI fragment for displaying N33ble1 connection status for each BLE characteristic. This is
+ * "read-only" aside from the user button to reset connection (disconnect and attempt reconnection
+ * to N33ble1).
+ */
 public class ArduinoFragment extends Fragment {
     private static final String LOG_TAG = "ArduinoFragment";
 

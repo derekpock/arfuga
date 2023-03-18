@@ -14,9 +14,14 @@ import androidx.fragment.app.Fragment;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import dlzp.arfuga.DLZPServerClient;
+import dlzp.arfuga.ArfugaApp;
+import dlzp.arfuga.data.DLZPServerClient;
 import dlzp.arfuga.databinding.FragmentFueltrackerBinding;
 
+/**
+ * Builds UI fragment for user to input fuel refill information and sends signals to transmit the
+ * user's info to the FuelTrackerServer when done.
+ */
 public class FuelTrackerFragment extends Fragment {
 
     private final Handler handler = new Handler(Looper.getMainLooper());
@@ -34,8 +39,7 @@ public class FuelTrackerFragment extends Fragment {
             sendInfo(binding);
         });
 
-        DLZPServerClient
-                .getInstance(getContext())
+        ArfugaApp.getDLZPServerClient()
                 .getFuelTrackerStatus()
                 .observe(getViewLifecycleOwner(), (String newStatus) -> {
                     if(newStatus.equals(DLZPServerClient.FuelTrackerStatusValueSuccess)) {
@@ -130,6 +134,6 @@ public class FuelTrackerFragment extends Fragment {
                 timeDriving + "\t" +
                 miles;
 
-        DLZPServerClient.getInstance(getContext()).sendFuelTrackerMessage(message);
+        ArfugaApp.getDLZPServerClient().sendFuelTrackerMessage(message);
     }
 }

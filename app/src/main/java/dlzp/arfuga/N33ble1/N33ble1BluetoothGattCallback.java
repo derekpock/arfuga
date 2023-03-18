@@ -1,4 +1,4 @@
-package dlzp.arfuga;
+package dlzp.arfuga.N33ble1;
 
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
@@ -13,6 +13,18 @@ import android.util.Log;
 import java.util.LinkedList;
 import java.util.UUID;
 
+import dlzp.arfuga.Constants;
+
+/**
+ * When N33ble1 is in range and connectable, this is created/maintained by N33ble1MonitorService to
+ * monitor BLE characteristics. This also manages async ChangeRequests that push new data to N33ble1
+ * via one of its BLE characteristics.
+ *
+ * TODO This is accessed statically through N33ble1MonitorService. Should it exist / be accessible
+ *      elsewhere? Use Intent actions instead? Move away from intents entirely?
+ * TODO This class is doing multiple things (monitoring BLE and monitoring ChangeRequests). It
+ *      should probably be broken up.
+ */
 public class N33ble1BluetoothGattCallback extends BluetoothGattCallback {
     private static final String LOG_TAG = "N33ble1BluetoothGattCallback";
 
@@ -131,8 +143,8 @@ public class N33ble1BluetoothGattCallback extends BluetoothGattCallback {
     private BluetoothGatt gatt = null;
     private final LinkedList<ChangeRequest> changeRequests = new LinkedList<>();
 
-    N33ble1BluetoothGattCallback(Context context) {
-        this.context = context;
+    N33ble1BluetoothGattCallback(Context applicationContext) {
+        this.context = applicationContext;
     }
 
     private BluetoothGattService getCbService() throws NullBleComponentException {

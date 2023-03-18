@@ -1,4 +1,4 @@
-package dlzp.arfuga;
+package dlzp.arfuga.ui;
 
 import android.app.Activity;
 import android.bluetooth.le.ScanFilter;
@@ -15,6 +15,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.IntentSenderRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
@@ -24,6 +29,11 @@ import androidx.navigation.ui.NavigationUI;
 
 import java.util.List;
 
+import dlzp.arfuga.ArfugaApp;
+import dlzp.arfuga.N33ble1.N33ble1MonitorService;
+import dlzp.arfuga.N33ble1.N33ble1State;
+import dlzp.arfuga.R;
+import dlzp.arfuga.data.DLZPServerClient;
 import dlzp.arfuga.databinding.ActivityBottomNavBinding;
 
 //            ActivityCompat.requestPermissions(this, Manifest.permission.BLUETOOTH_CONNECT, 0);
@@ -34,6 +44,14 @@ import dlzp.arfuga.databinding.ActivityBottomNavBinding;
 // to handle the case where the user grants the permission. See the documentation
 // for ActivityCompat#requestPermissions for more details.
 
+/**
+ * Core UI Activity, this prepares the tab UI fragments and Toasts events received from
+ * N33ble1State. Also will trigger association automatically on app startup.
+ *
+ * TODO Toasting could be moved to its own class.
+ * TODO Bluetooth permission, association configuration, and other less-hardcoding of Android
+ *      components.
+ */
 public class ActivityBottomNav extends AppCompatActivity {
     private static final String LOG_TAG = "ArfugaActivity";
 
@@ -108,100 +126,14 @@ public class ActivityBottomNav extends AppCompatActivity {
         // TODO dissociate button
         // TODO configure target device menu?
 
-        // Prepare N33ble1 components
-        final CompanionDeviceManager companionDeviceManager =
-                (CompanionDeviceManager) getSystemService(Context.COMPANION_DEVICE_SERVICE);
-
-        final List<String> associations = companionDeviceManager.getAssociations();
-        Log.v(LOG_TAG, "Associated devices: " + associations);
-        if (associations.contains(getString(R.string.N33ble1Address))) {
-            startServicingN33ble1(companionDeviceManager);
-        } else {
-            associateN33ble1(companionDeviceManager);
-        }
+        // Have the N33ble1AssociationManager try to associate if we aren't associated already.
+        // Noop if already associated - we may be already connected to the device in that case.
+        ArfugaApp.getN33ble1AssociationManager().associate(this);
     }
 
     @Override
     protected void onDestroy() {
         unregisterReceiver(myBroadcastReceiver);
         super.onDestroy();
-    }
-
-    private void startServicingN33ble1(CompanionDeviceManager companionDeviceManager) {
-        if (!companionDeviceManager.getAssociations().contains(getString(R.string.N33ble1Address))) {
-            Log.e(LOG_TAG, "Cannot start servicing N33ble if it has not been associated!");
-            return;
-        }
-
-        // Tell CDM that we want notifications when N33ble1 enters or leaves range.
-        companionDeviceManager.startObservingDevicePresence(getString(R.string.N33ble1Address));
-
-        // CompanionDeviceService does not send a notification on startup if the device is already
-        // present. Since there is a separate monitor service that manages the bluetooth connection
-        // (and will foreground itself as needed), just start the service now and let it die if no/
-        // device is present.
-        startService(new Intent(this, N33ble1MonitorService.class));
-    }
-
-    private void associateN33ble1(CompanionDeviceManager companionDeviceManager) {
-        final ScanFilter scanFilter = new ScanFilter.Builder()
-                .setDeviceAddress(getString(R.string.N33ble1Address))
-                .build();
-
-        final BluetoothLeDeviceFilter bleDeviceFilter = new BluetoothLeDeviceFilter.Builder()
-                .setScanFilter(scanFilter)
-                .build();
-
-        final AssociationRequest associationRequest = new AssociationRequest.Builder()
-                .addDeviceFilter(bleDeviceFilter)
-                .setSingleDevice(true)
-                .build();
-
-        // TODO do we need to scan for the device first? what UI to show while waiting for device?
-        //      low priority - this is really only going to happen once on first install for us
-        companionDeviceManager.associate(associationRequest, new CompanionDeviceManager.Callback() {
-            @Override
-            public void onDeviceFound(IntentSender chooserLauncher) {
-                try {
-                    // TODO increment / work with requestCode
-                    // TODO fix deprecated command
-                    startIntentSenderForResult(
-                            chooserLauncher, 0, null, 0, 0, 0
-                    );
-                } catch (IntentSender.SendIntentException e) {
-                    Log.e(LOG_TAG, "Failed to send intent: " + e);
-                }
-            }
-
-            @Override
-            public void onFailure(CharSequence error) {
-                Log.e(LOG_TAG, "Error in device association: " + error);
-            }
-        }, null);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (resultCode != Activity.RESULT_OK) {
-            Log.e(LOG_TAG, "onActivityResult resultCode is not OK: " + resultCode);
-            return;
-        }
-
-        if (requestCode == 0) {
-            if (data == null) {
-                Log.e(LOG_TAG, "Request code " + requestCode + " had unexpected null data");
-                return;
-            }
-
-            final ScanResult scanResult = data.getParcelableExtra(CompanionDeviceManager.EXTRA_DEVICE);
-            if(scanResult.getDevice().getAddress().equals(getString(R.string.N33ble1Address))) {
-                Log.i(LOG_TAG, "User approved association to " + getString(R.string.N33ble1Address));
-                startServicingN33ble1((CompanionDeviceManager) getSystemService(Context.COMPANION_DEVICE_SERVICE));
-            } else {
-                Log.e(LOG_TAG, "Association completed with unexpected address: " + scanResult.getDevice().getAddress());
-            }
-        }
-
-        super.onActivityResult(requestCode, resultCode, data);
     }
 }

@@ -1,4 +1,4 @@
-package dlzp.arfuga;
+package dlzp.arfuga.N33ble1;
 
 import android.companion.CompanionDeviceService;
 import android.content.Intent;
@@ -6,6 +6,15 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import dlzp.arfuga.R;
+
+/**
+ * Signaled by the CompanionDeviceManager whenever N33ble1 enters or leaves range. CDM knows of this
+ * class thanks to servicing done by N33ble1AssociationManager.
+ *
+ * This service does very little. A companion service detached from CDM (and one that can be
+ * foregrounded) N33ble1MonitorService does the actual monitoring of N33ble1 when in range.
+ */
 public class N33ble1CompanionService extends CompanionDeviceService {
     private static final String LOG_TAG = "N33ble1CompanionService";
 
@@ -27,7 +36,7 @@ public class N33ble1CompanionService extends CompanionDeviceService {
         }
         Log.i(LOG_TAG, "N33ble1 appeared");
 
-        startService(new Intent(this.getApplicationContext(), N33ble1MonitorService.class));
+        startService(new Intent(getApplicationContext(), N33ble1MonitorService.class));
     }
 
     @Override
@@ -49,6 +58,6 @@ public class N33ble1CompanionService extends CompanionDeviceService {
         }
         Log.i(LOG_TAG, "N33ble1 disappeared");
 
-        stopService(new Intent(this.getApplicationContext(), N33ble1MonitorService.class));
+        stopService(new Intent(getApplicationContext(), N33ble1MonitorService.class));
     }
 }

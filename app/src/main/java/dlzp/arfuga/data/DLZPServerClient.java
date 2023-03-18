@@ -1,6 +1,7 @@
-package dlzp.arfuga;
+package dlzp.arfuga.data;
 
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.util.Log;
 
@@ -23,17 +24,24 @@ import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 
+import dlzp.arfuga.ArfugaApp;
+import dlzp.arfuga.R;
+
+/**
+ * Connects to the custom remote server and stores stateful data provided to/by the remote server
+ * for various remote components of Arfuga.
+ */
 public class DLZPServerClient {
     private static final String LOG_TAG = "DLZPServerClient";
-    private static final String PreferencesName = "dlzp.arfuga.DLZPServerClient.preferences";
-    private static final String PreferencesGaragePiEnabled = "dlzp.arfuga.DLZPServerClient.preferences.GaragePiEnabled";
+    private static final String PreferencesName = "dlzp.arfuga.data.DLZPServerClient.preferences";
+    private static final String PreferencesGaragePiEnabled = "dlzp.arfuga.data.DLZPServerClient.preferences.GaragePiEnabled";
     public static final String FuelTrackerStatusValueSuccess = "Success!";
 
-    public static final String GaragePiStatusUpdated = "dlzp.arfuga.DLZPServerClient.intent.action.GaragePiStatus";
-    public static final String GaragePiError = "dlzp.arfuga.DLZPServerClient.intent.action.GaragePiCmdError";
-    public static final String FuelTrackerStatusUpdated = "dlzp.arfuga.DLZPServerClient.intent.action.FuelTrackerStatusUpdated";
+    public static final String GaragePiStatusUpdated = "dlzp.arfuga.data.DLZPServerClient.intent.action.GaragePiStatus";
+    public static final String GaragePiError = "dlzp.arfuga.data.DLZPServerClient.intent.action.GaragePiCmdError";
+    public static final String FuelTrackerStatusUpdated = "dlzp.arfuga.data.DLZPServerClient.intent.action.FuelTrackerStatusUpdated";
 
-    public static final String ExtraErrorInfo = "dlzp.arfuga.DLZPServerClient.intent.extra.ErrorInfo";
+    public static final String ExtraErrorInfo = "dlzp.arfuga.data.DLZPServerClient.intent.extra.ErrorInfo";
 
     public static final String[] AllActions = {
             GaragePiStatusUpdated,
@@ -41,17 +49,8 @@ public class DLZPServerClient {
             FuelTrackerStatusUpdated
     };
 
-    private static DLZPServerClient instance = null;
-    public static DLZPServerClient getInstance(Context context) {
-        if(instance == null) {
-            instance = new DLZPServerClient(context);
-        }
-
-        return instance;
-    }
-
-    private final ExecutorService executorService = Executors.newCachedThreadPool();
     private final Context context;
+    private final ExecutorService executorService = Executors.newCachedThreadPool();
     private final MutableLiveData<String> garagePiStatus = new MutableLiveData<>();
     private final MutableLiveData<String> garagePiErrorInfo = new MutableLiveData<>();
     private final MutableLiveData<String> fuelTrackerStatus = new MutableLiveData<>();
@@ -61,10 +60,10 @@ public class DLZPServerClient {
     public LiveData<String> getGaragePiErrorInfo() { return garagePiErrorInfo; }
     public LiveData<String> getFuelTrackerStatus() { return fuelTrackerStatus; }
 
-    private DLZPServerClient(Context context) {
-        this.context = context.getApplicationContext();
-        garagePiEnabled = this.context
-                .getSharedPreferences(PreferencesName, Context.MODE_PRIVATE)
+    public DLZPServerClient(Context applicationContext) {
+        this.context = applicationContext;
+
+        garagePiEnabled = context.getSharedPreferences(PreferencesName, Context.MODE_PRIVATE)
                 .getBoolean(PreferencesGaragePiEnabled, false);
         garagePiStatus.postValue(garagePiEnabled ? "not connected" : "locally disabled");
 

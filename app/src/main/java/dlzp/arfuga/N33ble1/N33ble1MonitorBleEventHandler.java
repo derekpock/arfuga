@@ -1,4 +1,4 @@
-package dlzp.arfuga;
+package dlzp.arfuga.N33ble1;
 
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.content.Context;
@@ -7,20 +7,31 @@ import android.os.Looper;
 import android.util.Log;
 
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
 
 import java.util.function.Consumer;
 
+import dlzp.arfuga.ArfugaApp;
+import dlzp.arfuga.Constants;
+
+/**
+ * This specifically handles ChangeReceived intent-actions that N33ble1MonitorService receives.
+ * Based on BLE characteristics changed, this will perform the action necessary. For example, when a
+ * button press has been confirmed, this will signal to the necessary components or clients to
+ * perform the action the user expects when the button is pressed.
+ *
+ * TODO Assess this for improvements. There is no second-button functionality right now. This may
+ *      need a better connection to the UI.
+ */
 public class N33ble1MonitorBleEventHandler {
-    private static final String LOG_TAG = "N33ble1MonitorService";
+    private static final String LOG_TAG = "N33ble1MonitorBleEventHandler";
 
     private final Context context;
     private final LifecycleOwner lifecycleOwner;
     private final N33ble1BluetoothGattCallback bluetoothGattCallback;
-    private final android.os.Handler handlerLedLeft = new Handler(Looper.getMainLooper());
+    private final Handler handlerLedLeft = new Handler(Looper.getMainLooper());
 
-    N33ble1MonitorBleEventHandler(Context context, LifecycleOwner lifecycleOwner, N33ble1BluetoothGattCallback bluetoothGattCallback) {
-        this.context = context;
+    N33ble1MonitorBleEventHandler(Context applicationContext, LifecycleOwner lifecycleOwner, N33ble1BluetoothGattCallback bluetoothGattCallback) {
+        this.context = applicationContext;
         this.lifecycleOwner = lifecycleOwner;
         this.bluetoothGattCallback = bluetoothGattCallback;
     }
@@ -33,7 +44,9 @@ public class N33ble1MonitorBleEventHandler {
         final byte[] buttonHandledValue = buttonHandledCharacter.getValue();
 
         if(buttonValue == null || buttonHandledValue == null) {
-            Log.i(LOG_TAG, "ButtonCharacter or ButtonHandledCharacter is not yet read.");
+            // Kind-of noisy as INFO because this is expected on first connection as we send out
+            // ChangeEvents on every BLE first-read.
+            Log.d(LOG_TAG, "ButtonCharacter or ButtonHandledCharacter is not yet read.");
             return;
         }
 
@@ -135,7 +148,9 @@ public class N33ble1MonitorBleEventHandler {
         switch (pressType) {
             case Constants.ButtonPressTypePressSingle: {
                 Log.i(LOG_TAG, "Button pressed once");
-                final boolean sendSuccess = DLZPServerClient.getInstance(context).sendGaragePiCmd(Constants.GaragePiCmdStatus);
+                final boolean sendSuccess = ArfugaApp
+                        .getDLZPServerClient()
+                        .sendGaragePiCmd(Constants.GaragePiCmdStatus);
                 if (sendSuccess) {
                     setButtonLed(true, Constants.LedTimingLong, 0, 0, 0);
 //                    DLZPServerClient.getInstance(context).getGaragePiStatus().observe(lifecycleOwner, new Observer<String>() {
@@ -151,7 +166,9 @@ public class N33ble1MonitorBleEventHandler {
 
             case Constants.ButtonPressTypePressDouble: {
                 Log.i(LOG_TAG, "Button pressed twice");
-                final boolean sendSuccess = DLZPServerClient.getInstance(context).sendGaragePiCmd(Constants.GaragePiCmdTimed);
+                final boolean sendSuccess = ArfugaApp
+                        .getDLZPServerClient()
+                        .sendGaragePiCmd(Constants.GaragePiCmdTimed);
                 if (sendSuccess) {
                     setButtonLed(true, Constants.LedTimingLong, 1, 1, 35);
                 } else {
@@ -161,7 +178,9 @@ public class N33ble1MonitorBleEventHandler {
 
             case Constants.ButtonPressTypeHoldShort: {
                 Log.i(LOG_TAG, "Button held short");
-                final boolean sendSuccess = DLZPServerClient.getInstance(context).sendGaragePiCmd(Constants.GaragePiCmdToggle);
+                final boolean sendSuccess = ArfugaApp
+                        .getDLZPServerClient()
+                        .sendGaragePiCmd(Constants.GaragePiCmdToggle);
                 if (sendSuccess) {
                     setButtonLed(true, Constants.LedTimingLong, 1, 2, 12);
                 } else {
@@ -171,7 +190,9 @@ public class N33ble1MonitorBleEventHandler {
 
             case Constants.ButtonPressTypeHoldLong: {
                 Log.i(LOG_TAG, "Button held long");
-                final boolean isEnabled = DLZPServerClient.getInstance(context).toggleGaragePiLocallyEnabled();
+                final boolean isEnabled = ArfugaApp
+                        .getDLZPServerClient()
+                        .toggleGaragePiLocallyEnabled();
                 if (isEnabled) {
                     setButtonLed(true, Constants.LedTimingLong, 3, 2, 12);
                 } else {

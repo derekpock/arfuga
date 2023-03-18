@@ -11,10 +11,15 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import dlzp.arfuga.ArfugaApp;
 import dlzp.arfuga.Constants;
-import dlzp.arfuga.DLZPServerClient;
+import dlzp.arfuga.data.DLZPServerClient;
 import dlzp.arfuga.databinding.FragmentGaragepiBinding;
 
+/**
+ * Builds UI fragment for presenting the status of GaragePi to the user as well as numerous buttons
+ * for operating GaragePi. This communicates with DLZPServerClient on most button presses.
+ */
 public class GaragePiFragment extends Fragment {
 
     private final Handler handler = new Handler(Looper.getMainLooper());
@@ -38,16 +43,14 @@ public class GaragePiFragment extends Fragment {
         binding.butDisenable.setOnClickListener((View) -> {
             setFieldsEnabled(false);
             handler.postDelayed(() -> setFieldsEnabled(true), 500);
-            DLZPServerClient.getInstance(getContext()).toggleGaragePiLocallyEnabled();
+            ArfugaApp.getDLZPServerClient().toggleGaragePiLocallyEnabled();
         });
 
-        DLZPServerClient
-                .getInstance(getContext())
+        ArfugaApp.getDLZPServerClient()
                 .getGaragePiStatus()
                 .observe(getViewLifecycleOwner(), binding.labStatus::setText);
 
-        DLZPServerClient
-                .getInstance(getContext())
+        ArfugaApp.getDLZPServerClient()
                 .getGaragePiErrorInfo()
                 .observe(getViewLifecycleOwner(), (String errorInfo) -> {
                     if(!errorInfo.isEmpty()) {
@@ -68,7 +71,7 @@ public class GaragePiFragment extends Fragment {
     private void sendCmd(String cmd) {
         setFieldsEnabled(false);
         handler.postDelayed(() -> setFieldsEnabled(true), 500);
-        DLZPServerClient.getInstance(getContext()).sendGaragePiCmd(cmd);
+        ArfugaApp.getDLZPServerClient().sendGaragePiCmd(cmd);
     }
 
     private void setFieldsEnabled(boolean enabled) {

@@ -1,10 +1,9 @@
-package dlzp.arfuga;
+package dlzp.arfuga.N33ble1;
 
 import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
@@ -23,6 +22,24 @@ import androidx.lifecycle.LifecycleService;
 
 import org.jetbrains.annotations.NotNull;
 
+import dlzp.arfuga.R;
+
+/**
+ * Attempts to create and maintain a BLE connection with N33ble1 when created. While connected, this
+ * will foreground itself to stay alive and continue monitoring N33ble1's characteristics through
+ * N33ble1BluetoothGattCallback.
+ *
+ * This service is launched immediately on startup (as long as N33ble1 is associated) because of
+ * some scanning limitation of the CompanionDeviceManager on startup. It is likely that this will be
+ * quickly destroyed by the Android system if N33ble1 is not in range (and subsequently, this isn't
+ * foregrounded).
+ *
+ * Once N33ble1CompanionService receives a notification from CDM that N33ble1 is in-range or leaves
+ * range, this service will be started/stopped by N33ble1CompanionService.
+ *
+ * In the end, this service should be alive, foregrounded, and monitoring any time N33ble1 is
+ * in-range.
+ */
 public class N33ble1MonitorService extends LifecycleService {
     private static final String LOG_TAG = "N33ble1MonitorService";
     private static final int NotificationIdForeground = 1;
