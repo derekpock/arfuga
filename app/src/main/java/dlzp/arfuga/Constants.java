@@ -21,6 +21,7 @@ public class Constants {
     public static final byte LedTimingMedium = (byte)0b10000000;
     public static final byte LedTimingShort =  (byte)0b01000000;
     public static final byte LedTimingBurst =  (byte)0b00000000;
+    public static final byte LedTimingIgnore = LedTimingBurst;
 
     public static final String GaragePiCmdToggle = "toggle";
     public static final String GaragePiCmdTimed = "timedOperation";

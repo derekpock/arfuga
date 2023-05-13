@@ -270,37 +270,20 @@ public class N33ble1BluetoothGattCallback extends BluetoothGattCallback {
                 return;
             }
 
-            // Note, character values are not known at this point. We either need to register for
-            // changes and wait for a change, or just request a character read and wait for the read
-            // result callback.
-
             try {
                 // Register for character change notifications for the button characters.
-                if (!registerForNotifications(getButtonLeftCharacter())) {
+                if(!registerForNotifications(getButtonLeftCharacter()) || !registerForNotifications(getButtonRightCharacter())) {
+                    // TODO try again? above too
                     return;
                 }
 
-                if (!registerForNotifications(getButtonRightCharacter())) {
-                    return;
-                }
-
-                // Read initial values of button and buttonHandled characters.
-                addChangeRequest(new ChangeRequest(getButtonLeftCharacter(), false));
-                addChangeRequest(new ChangeRequest(getButtonRightCharacter(), false));
-                addChangeRequest(new ChangeRequest(getButtonLeftHandledCharacter(), false));
-                addChangeRequest(new ChangeRequest(getButtonRightHandledCharacter(), false));
-
-                // Read initial values of board and button led characters.
-                // We may have more use for this in the future (keep alive?) but right now we just put
-                // this value on the UI as a point of entrance + debug.
-//                addChangeRequest(new ChangeRequest(getBoardLedCharacter(), false));
-                addChangeRequest(new ChangeRequest(getButtonLeftLedCharacter(), false));
-                addChangeRequest(new ChangeRequest(getButtonRightLedCharacter(), false));
-
-                byte[] lights = new byte[]{(byte)0, (byte)255, (byte) 0, (byte)0};
-                BluetoothGattCharacteristic boardLed = getBoardLedCharacter();
-                boardLed.setValue(lights);
-                addChangeRequest(new ChangeRequest(boardLed, true));
+                // Note, character values are not known at this point. We either need to wait for a
+                // change (perhaps making it ourselves) or just request a character read and wait
+                // for the read result callback.
+                // This intent will trigger N33ble1MonitorBleEventHandler to send read requests and
+                // make some change requests.
+                Log.i(LOG_TAG, "N33ble1 BluetoothGatt Ready");
+                N33ble1State.sendIntent(context, N33ble1State.BluetoothGattReady);
 
             } catch (NullBleComponentException e) {
                 Log.e(LOG_TAG, e.getMessage());

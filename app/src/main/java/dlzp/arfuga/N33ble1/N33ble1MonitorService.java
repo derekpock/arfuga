@@ -81,6 +81,14 @@ public class N33ble1MonitorService extends LifecycleService {
                     }
                     break;
 
+                case N33ble1State.BluetoothGattReady:
+                    if (bleEventHandler == null) {
+                        Log.e(LOG_TAG, "BleEventHandler was null on BluetoothGattReady!");
+                    } else {
+                        bleEventHandler.onBluetoothGattReady();
+                    }
+                    break;
+
                 default:
                     Log.e(LOG_TAG, "Unhandled registered broadcast received: " + action);
             }
@@ -119,6 +127,7 @@ public class N33ble1MonitorService extends LifecycleService {
         intentFilter.addAction(N33ble1State.DeviceDisconnected);
         intentFilter.addAction(N33ble1State.DeviceConnected);
         intentFilter.addAction(N33ble1State.ChangeReceived);
+        intentFilter.addAction(N33ble1State.BluetoothGattReady);
         registerReceiver(myBroadcastReceiver, intentFilter);
 
         connectToN33ble1();
@@ -207,7 +216,7 @@ public class N33ble1MonitorService extends LifecycleService {
 
         bluetoothGattCallback = new N33ble1BluetoothGattCallback(this);
         bluetoothGatt = bluetoothDevice.connectGatt(this, true, bluetoothGattCallback);
-        bleEventHandler = new N33ble1MonitorBleEventHandler(this, this, bluetoothGattCallback);
+        bleEventHandler = new N33ble1MonitorBleEventHandler(this, bluetoothGattCallback);
     }
 
     private void disconnectFromN33ble1() {

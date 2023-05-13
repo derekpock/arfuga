@@ -26,16 +26,55 @@ public class N33ble1MonitorBleEventHandler {
     private static final String LOG_TAG = "N33ble1MonitorBleEventHandler";
 
     private final Context context;
-    private final LifecycleOwner lifecycleOwner;
     private final N33ble1BluetoothGattCallback bluetoothGattCallback;
     private final Handler handlerLedLeft = new Handler(Looper.getMainLooper());
 
-    N33ble1MonitorBleEventHandler(Context applicationContext, LifecycleOwner lifecycleOwner, N33ble1BluetoothGattCallback bluetoothGattCallback) {
+    // If LifecycleOwner is needed in the future, re-add it as argument from N33ble1MonitorService.
+    N33ble1MonitorBleEventHandler(Context applicationContext, N33ble1BluetoothGattCallback bluetoothGattCallback) {
         this.context = applicationContext;
-        this.lifecycleOwner = lifecycleOwner;
         this.bluetoothGattCallback = bluetoothGattCallback;
     }
 
+    public void onBluetoothGattReady() {
+        try {
+            // Read initial values of button and buttonHandled characters.
+            bluetoothGattCallback.addChangeRequest(bluetoothGattCallback.new ChangeRequest(bluetoothGattCallback.getButtonLeftCharacter(), false));
+            bluetoothGattCallback.addChangeRequest(bluetoothGattCallback.new ChangeRequest(bluetoothGattCallback.getButtonRightCharacter(), false));
+            bluetoothGattCallback.addChangeRequest(bluetoothGattCallback.new ChangeRequest(bluetoothGattCallback.getButtonLeftHandledCharacter(), false));
+            bluetoothGattCallback.addChangeRequest(bluetoothGattCallback.new ChangeRequest(bluetoothGattCallback.getButtonRightHandledCharacter(), false));
+
+            // Set left and right leds to ON when first connecting.
+            setButtonLed(true, Constants.LedTimingIgnore, 0, 0, 0);
+            setButtonLed(false, Constants.LedTimingIgnore, 0, 0, 0);
+
+            // Set board rgb led to blue when first connecting.
+            byte[] lights = new byte[]{(byte) 0, (byte) 0, (byte) 0, (byte) 255};
+            BluetoothGattCharacteristic boardLed = bluetoothGattCallback.getBoardLedCharacter();
+            boardLed.setValue(lights);
+            bluetoothGattCallback.addChangeRequest(bluetoothGattCallback.new ChangeRequest(boardLed, true));
+        } catch (N33ble1BluetoothGattCallback.NullBleComponentException e) {
+            Log.e(LOG_TAG, e.getMessage());
+            N33ble1State.sendIntent(context, N33ble1State.BleServiceError);
+        }
+    }
+
+    public void onChangeEvent() {
+        try {
+            checkAndProcessButtonChanged(
+                    bluetoothGattCallback.getButtonLeftCharacter(),
+                    bluetoothGattCallback.getButtonLeftHandledCharacter(),
+                    this::onButtonLeftHandledConfirmed);
+
+            checkAndProcessButtonChanged(
+                    bluetoothGattCallback.getButtonRightCharacter(),
+                    bluetoothGattCallback.getButtonRightHandledCharacter(),
+                    this::onButtonRightHandledConfirmed);
+
+        } catch (N33ble1BluetoothGattCallback.NullBleComponentException e) {
+            Log.e(LOG_TAG, e.getMessage());
+            N33ble1State.sendIntent(context, N33ble1State.BleServiceError);
+        }
+    }
     private void checkAndProcessButtonChanged(
             BluetoothGattCharacteristic buttonCharacter,
             BluetoothGattCharacteristic buttonHandledCharacter,
@@ -80,25 +119,7 @@ public class N33ble1MonitorBleEventHandler {
         bluetoothGattCallback.addChangeRequest(changeRequest);
     }
 
-    public void onChangeEvent() {
-        try {
-            checkAndProcessButtonChanged(
-                    bluetoothGattCallback.getButtonLeftCharacter(),
-                    bluetoothGattCallback.getButtonLeftHandledCharacter(),
-                    this::onButtonLeftHandledConfirmed);
-
-            checkAndProcessButtonChanged(
-                    bluetoothGattCallback.getButtonRightCharacter(),
-                    bluetoothGattCallback.getButtonRightHandledCharacter(),
-                    this::onButtonRightHandledConfirmed);
-
-
-        } catch (N33ble1BluetoothGattCallback.NullBleComponentException e) {
-            Log.e(LOG_TAG, e.getMessage());
-            N33ble1State.sendIntent(context, N33ble1State.BleServiceError);
-        }
-    }
-
+    // TODO: delaySeconds is only implemented for LEFT at the moment!
     private void setButtonLed(boolean isLeft, byte timing, int firstSeqInt, int secondSeqInt, int delaySeconds) {
         final byte firstSeq = (byte)firstSeqInt;
         final byte secondSeq = (byte)secondSeqInt;
@@ -136,7 +157,7 @@ public class N33ble1MonitorBleEventHandler {
         if(isLeft && delaySeconds != 0) {
             handlerLedLeft.removeCallbacksAndMessages(null);
             handlerLedLeft.postDelayed(() -> {
-                setButtonLed(true, Constants.LedTimingBurst, 0, 0, 0);
+                setButtonLed(true, Constants.LedTimingIgnore, 0, 0, 0);
             }, delaySeconds * 1000L);
         }
     }
@@ -152,7 +173,8 @@ public class N33ble1MonitorBleEventHandler {
                         .getDLZPServerClient()
                         .sendGaragePiCmd(Constants.GaragePiCmdStatus);
                 if (sendSuccess) {
-                    setButtonLed(true, Constants.LedTimingLong, 0, 0, 0);
+                    setButtonLed(true, Constants.LedTimingIgnore, 0, 0, 0);
+                    // TODO implement status get and UI
 //                    DLZPServerClient.getInstance(context).getGaragePiStatus().observe(lifecycleOwner, new Observer<String>() {
 //                        @Override
 //                        public void onChanged(String status) {

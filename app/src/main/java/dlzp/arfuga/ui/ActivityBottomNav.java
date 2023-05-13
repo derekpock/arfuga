@@ -82,10 +82,12 @@ public class ActivityBottomNav extends AppCompatActivity {
                     Toast.makeText(context, "Arduino Device Disconnected", Toast.LENGTH_SHORT).show();
                     break;
                 case N33ble1State.ResetConnection:
+                case N33ble1State.BluetoothGattReady:
                 case DLZPServerClient.GaragePiStatusUpdated:
                 case DLZPServerClient.GaragePiError:
                 case DLZPServerClient.FuelTrackerStatusUpdated:
-                    // These cases are already sufficiently handled via LiveData ui elements.
+                    // These cases are already sufficiently handled via LiveData ui elements or they
+                    // are not ui desirable.
                     break;
 
                 default:
