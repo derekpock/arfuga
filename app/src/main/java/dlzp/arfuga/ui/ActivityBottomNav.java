@@ -83,6 +83,7 @@ public class ActivityBottomNav extends AppCompatActivity {
                     break;
                 case N33ble1State.ResetConnection:
                 case N33ble1State.BluetoothGattReady:
+                case N33ble1State.BluetoothGattError:
                 case DLZPServerClient.GaragePiStatusUpdated:
                 case DLZPServerClient.GaragePiError:
                 case DLZPServerClient.FuelTrackerStatusUpdated:

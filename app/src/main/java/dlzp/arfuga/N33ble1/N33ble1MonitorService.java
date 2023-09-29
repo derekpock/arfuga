@@ -22,6 +22,7 @@ import androidx.lifecycle.LifecycleService;
 
 import org.jetbrains.annotations.NotNull;
 
+import dlzp.arfuga.EventThrottler;
 import dlzp.arfuga.R;
 
 /**
@@ -89,6 +90,20 @@ public class N33ble1MonitorService extends LifecycleService {
                     }
                     break;
 
+                case N33ble1State.BluetoothGattError:
+                    // Reset connections and retry our connection on gatt errors. If this is too
+                    // frequent, it will fall-back to a full BleServiceError.
+                    if(bluetoothGattErrorThrottler.tryTriggerEvent()) {
+                        N33ble1State.sendIntent(getApplicationContext(), N33ble1State.ResetConnection);
+                    } else {
+                        N33ble1State.sendIntent(getApplicationContext(), N33ble1State.BleServiceError);
+                    }
+                    break;
+
+                case N33ble1State.BleServiceError:
+                    disconnectFromN33ble1();
+                    break;
+
                 default:
                     Log.e(LOG_TAG, "Unhandled registered broadcast received: " + action);
             }
@@ -96,6 +111,7 @@ public class N33ble1MonitorService extends LifecycleService {
     }
 
     private MyBroadcastReceiver myBroadcastReceiver = null;
+    private final EventThrottler bluetoothGattErrorThrottler = new EventThrottler(3, 30000);
     private BluetoothGatt bluetoothGatt = null;
     private N33ble1BluetoothGattCallback bluetoothGattCallback = null;
     private N33ble1MonitorBleEventHandler bleEventHandler = null;
@@ -128,6 +144,7 @@ public class N33ble1MonitorService extends LifecycleService {
         intentFilter.addAction(N33ble1State.DeviceConnected);
         intentFilter.addAction(N33ble1State.ChangeReceived);
         intentFilter.addAction(N33ble1State.BluetoothGattReady);
+        intentFilter.addAction(N33ble1State.BluetoothGattError);
         registerReceiver(myBroadcastReceiver, intentFilter);
 
         connectToN33ble1();
@@ -220,6 +237,8 @@ public class N33ble1MonitorService extends LifecycleService {
     }
 
     private void disconnectFromN33ble1() {
+        stopForeground(true);
+
         bleEventHandler = null;
         try {
             if(bluetoothGatt != null) {

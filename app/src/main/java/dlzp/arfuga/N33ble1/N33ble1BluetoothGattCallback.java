@@ -57,7 +57,7 @@ public class N33ble1BluetoothGattCallback extends BluetoothGattCallback {
         private boolean doChange() {
             if(attempts > 5) {
                 Log.w(LOG_TAG, "Change request reached maximum attempts, not retrying.");
-                N33ble1State.sendIntent(context, N33ble1State.BleServiceError);
+                N33ble1State.sendIntent(context, N33ble1State.BluetoothGattError);
                 return false;
             }
             attempts++;
@@ -189,14 +189,14 @@ public class N33ble1BluetoothGattCallback extends BluetoothGattCallback {
                 character.getDescriptor(UUID.fromString(Constants.ClientCharacteristicConfiguration));
         if(descriptor == null) {
             Log.e(LOG_TAG, "When registering for notifications, descriptor is null from a non-null character!");
-            N33ble1State.sendIntent(context, N33ble1State.BleServiceError);
+            N33ble1State.sendIntent(context, N33ble1State.BluetoothGattError);
             return false;
         }
 
         if(!descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE)) {
             // Is the provided character supporting notifications?
             Log.e(LOG_TAG, "Unable to set ENABLE_NOTIFICATION_VALUE on descriptor!");
-            N33ble1State.sendIntent(context, N33ble1State.BleServiceError);
+            N33ble1State.sendIntent(context, N33ble1State.BluetoothGattError);
             return false;
         }
 
@@ -223,8 +223,15 @@ public class N33ble1BluetoothGattCallback extends BluetoothGattCallback {
             ensureGattMatch(gatt);
 
             if (status != BluetoothGatt.GATT_SUCCESS) {
-                Log.e(LOG_TAG, "BluetoothGatt encountered error on connection state change: " + status);
-                N33ble1State.sendIntent(context, N33ble1State.BleServiceError);
+                // Gatt seems to be erroring with this when the device is disconnected in some
+                // cases. Lower the severity of this error.
+                if(status == BluetoothGatt.GATT_INSUFFICIENT_AUTHORIZATION) {
+                    Log.i(LOG_TAG, "BluetoothGatt encountered GATT_INSUFFICIENT_AUTHORIZATION. Was the device just disconnected?");
+                } else {
+                    Log.e(LOG_TAG, "BluetoothGatt encountered error on connection state change: " + status);
+                }
+
+                N33ble1State.sendIntent(context, N33ble1State.BluetoothGattError);
                 return;
             }
 
@@ -266,7 +273,7 @@ public class N33ble1BluetoothGattCallback extends BluetoothGattCallback {
 
             if (status != BluetoothGatt.GATT_SUCCESS) {
                 Log.w(LOG_TAG, "BluetoothGatt encountered error when discovering services: " + status);
-                N33ble1State.sendIntent(context, N33ble1State.BleServiceError);
+                N33ble1State.sendIntent(context, N33ble1State.BluetoothGattError);
                 return;
             }
 
@@ -287,7 +294,7 @@ public class N33ble1BluetoothGattCallback extends BluetoothGattCallback {
 
             } catch (NullBleComponentException e) {
                 Log.e(LOG_TAG, e.getMessage());
-                N33ble1State.sendIntent(context, N33ble1State.BleServiceError);
+                N33ble1State.sendIntent(context, N33ble1State.BluetoothGattError);
             } catch (SecurityException e) {
                 N33ble1State.sendAndLogBluetoothPermissionError(context, LOG_TAG, "onServicesDiscovered");
             }

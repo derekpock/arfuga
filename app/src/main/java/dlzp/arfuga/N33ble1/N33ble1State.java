@@ -26,6 +26,7 @@ public class N33ble1State {
     public static final String DeviceDisconnected = "dlzp.arfuga.N33ble1.N33ble1State.intent.action.DeviceDisconnected";
     public static final String ResetConnection = "dlzp.arfuga.N33ble1.N33ble1State.intent.action.ResetConnection";
     public static final String BluetoothGattReady = "dlzp.arfuga.N33ble1.N33ble1State.intent.action.BluetoothGattReady";
+    public static final String BluetoothGattError = "dlzp.arfuga.N33ble1.N33ble1State.intent.action.BluetoothGattError";
 
     public static final String[] AllActions = {
             AdapterOffline,
@@ -36,7 +37,8 @@ public class N33ble1State {
             DeviceConnected,
             DeviceDisconnected,
             ResetConnection,
-            BluetoothGattReady
+            BluetoothGattReady,
+            BluetoothGattError
     };
 
     public static void sendIntent(Context context, String action) {
@@ -72,6 +74,7 @@ public class N33ble1State {
             case N33ble1State.InvalidTargetAddress:
             case N33ble1State.NoBluetoothPermissions:
             case N33ble1State.BleServiceError:
+            case N33ble1State.BluetoothGattError:
                 encounteredError.postValue(action);
                 break;
 
